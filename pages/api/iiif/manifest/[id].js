@@ -1,5 +1,5 @@
 import * as jsonld from 'jsonld'
-import {omit} from 'lodash'
+import {omit, sortBy} from 'lodash'
 
 const frame = {
   "@context" : {
@@ -52,11 +52,10 @@ const frame = {
     "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
     "dc" : "http://purl.org/dc/elements/1.1/"
   },
-  "@type": "sc:Manifest"
+  "@type": "Manifest",
 }
 
 async function constructManifest(data) {
-  console.log(data)
   let manifest = {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     id: data.id,
@@ -150,6 +149,7 @@ async function constructManifest(data) {
           ...data.structures.items.map(item => {
             return {
               id: item,
+              label: parseInt(item.split("_p")[1]),
               type: "Canvas",
             }
           })
@@ -195,6 +195,7 @@ export default async function handler(req, res) {
           rdfs:label ?seq ;
           sc:items ?resource .
         ?resource a oa:Annotation ;
+          rdfs:label ?seq ;
           oa:body ?imgUrl .
       } WHERE {
         GRAPH
@@ -235,6 +236,9 @@ export default async function handler(req, res) {
       let x = omit(object,["@context"])
       const constructedManifest = await constructManifest(x)
       const manifest = await constructedManifest
+
+      manifest.items = sortBy(manifest.items, o => o.label)
+      manifest.structures[0].items = sortBy(manifest.structures[0].items, i => i.label)
 
       res.status(200).json(manifest)
       break
