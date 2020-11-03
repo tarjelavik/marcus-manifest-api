@@ -111,13 +111,9 @@ async function constructManifest(data) {
               body: {
                 "id": canvas.body,
                 "type": "Image",
-                "type": "Image",
                 "format": "image/jpeg",
-                "service": {
-                  "id": canvas.body,
-                  "type": "ImageService2",
-                  "profile": "level0"
-                }
+                "width": 3000,
+                "height": 5000
               }
             }
           ]
