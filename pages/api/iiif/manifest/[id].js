@@ -35,6 +35,9 @@ const frame = {
       "@id" : "http://iiif.io/api/presentation/3#structures",
       "@type" : "@id"
     },
+    "thumbnail" : {
+      "@id" : "http://iiif.io/api/presentation/3#thumbnail",
+    },
     "description" : {
       "@id" : "http://purl.org/dc/elements/1.1/description"
     },
@@ -53,11 +56,19 @@ const frame = {
 }
 
 async function constructManifest(data) {
+  console.log(data)
   let manifest = {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     id: data.id,
     type: data.type,
     label: data.label,
+    thumbnail: [
+      {
+        id: data.thumbnail["@value"],
+        type: "Image",
+        format: "image/jpeg"
+      }
+    ],
     provider: [
       {
         "id": "https://www.uib.no/ub",
@@ -86,15 +97,15 @@ async function constructManifest(data) {
         ]
       }
     ],
-    "rights": "https://creativecommons.org/licenses/by/4.0/",
-    "requiredStatement": {
-      "label": { 
-        "no": [ "Kreditering" ],
-        "en": [ "Attribution" ] 
+    rights: "https://creativecommons.org/licenses/by/4.0/",
+    requiredStatement: {
+      label: { 
+        no: [ "Kreditering" ],
+        en: [ "Attribution" ] 
       },
-      "value": { 
-        "no": [ "Tilgjengeliggjort av Universitetsbiblioteket i Bergen" ],
-        "en": [ "Provided by University of Bergen Library" ] 
+      value: { 
+        no: [ "Tilgjengeliggjort av Universitetsbiblioteket i Bergen" ],
+        en: [ "Provided by University of Bergen Library" ] 
       }
     },
     items: [
@@ -103,8 +114,8 @@ async function constructManifest(data) {
           id: canvas.id,
           type: canvas.type,
           label: canvas.label,
-          width: 3000,
-          height: 5000,
+          width: 1000,
+          height: 2000,
           items: [
             {
               id: canvas.items.id,
@@ -120,8 +131,8 @@ async function constructManifest(data) {
                     "id": canvas.items.body.id,
                     "type": "Image",
                     "format": "image/jpeg",
-                    "width": 3000,
-                    "height": 5000
+                    "width": 1000,
+                    "height": 2000
                   }
                 }
               ]
@@ -163,7 +174,48 @@ export default async function handler(req, res) {
     }
 
     let query = `
-      PREFIX dct: <http://purl.org/dc/terms/> PREFIX ubbont: <http://data.ub.uib.no/ontology/> PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX sc: <http://iiif.io/api/presentation/3#> PREFIX dc: <http://purl.org/dc/elements/1.1/> PREFIX oa: <http://www.w3.org/ns/oa#> CONSTRUCT { ?s a sc:Manifest ; dct:identifier ?id ; rdfs:label ?title ; dc:description ?desc ; sc:items ?part ; sc:structures ?rangeURL . ?rangeURL a sc:Range ; sc:items ?part . ?part a sc:Canvas ; rdfs:label ?seq ; sc:items ?resource . ?resource a oa:Annotation ; oa:body ?imgUrl . } WHERE { GRAPH ?g { VALUES ?id {"${id}"} ?s ubbont:hasRepresentation ?repr ; dct:title ?title ; dct:description ?desc ; dct:identifier ?id . ?repr dct:hasPart ?part ; rdfs:label ?partLabel . ?part ubbont:hasResource ?resource ; ubbont:sequenceNr ?seq . ?resource ubbont:hasMDView ?image . BIND (iri(?image) as ?imgUrl ) BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest")) AS ?manifestURL) BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest/range/1")) AS ?rangeURL) } } ORDER BY ?s ?repr ?part ?resource ?image  
+      PREFIX dct: <http://purl.org/dc/terms/>
+      PREFIX ubbont: <http://data.ub.uib.no/ontology/>
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX sc: <http://iiif.io/api/presentation/3#>
+      PREFIX dc: <http://purl.org/dc/elements/1.1/>
+      PREFIX oa: <http://www.w3.org/ns/oa#>
+      CONSTRUCT {
+        ?s a sc:Manifest ;
+          dct:identifier ?id ;
+          rdfs:label ?title ;
+          dc:description ?desc ;
+          sc:thumbnail ?thumb ;
+          sc:items ?part ;
+          sc:structures ?rangeURL .
+        ?rangeURL a sc:Range ;
+          sc:items ?part .
+        ?part a sc:Canvas ;
+          rdfs:label ?seq ;
+          sc:items ?resource .
+        ?resource a oa:Annotation ;
+          oa:body ?imgUrl .
+      } WHERE {
+        GRAPH
+          ?g {
+            VALUES ?id {"${id}"} 
+            ?s ubbont:hasRepresentation ?repr ; 
+              dct:title ?title ; 
+              dct:description ?desc ; 
+              dct:identifier ?id ;
+              ubbont:hasThumbnail ?thumb . 
+            ?repr dct:hasPart ?part ; 
+              rdfs:label ?partLabel . 
+            ?part ubbont:hasResource ?resource ; 
+              ubbont:sequenceNr ?seq . 
+            ?resource ubbont:hasMDView ?image . 
+            BIND (iri(?image) as ?imgUrl ) 
+            BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest")) AS ?manifestURL) 
+            BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest/range/1")) AS ?rangeURL) 
+          } 
+        } 
+        ORDER BY ?s ?repr ?part ?resource ?image  
     `
 
     const results = fetch(`http://sparql.ub.uib.no/sparql/query?query=${encodeURIComponent(query)}&output=json`)
