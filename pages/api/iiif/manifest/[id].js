@@ -115,6 +115,12 @@ async function constructManifest(data) {
           label: canvas.label,
           width: 1000,
           height: 2000,
+          thumbnail: [
+            {
+            id: canvas.thumbnail,
+            type: "Image"
+            }
+          ],
           items: [
             {
               id: canvas.items.id,
@@ -174,7 +180,7 @@ export default async function handler(req, res) {
     }
 
     let query = `
-      PREFIX dct: <http://purl.org/dc/terms/>
+    PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX ubbont: <http://data.ub.uib.no/ontology/>
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -193,9 +199,9 @@ export default async function handler(req, res) {
           sc:items ?part .
         ?part a sc:Canvas ;
           rdfs:label ?seq ;
+          sc:thumbnail ?canvasThumb ;
           sc:items ?resource .
         ?resource a oa:Annotation ;
-          rdfs:label ?seq ;
           oa:body ?imgUrl .
       } WHERE {
         GRAPH
@@ -211,6 +217,7 @@ export default async function handler(req, res) {
             ?part ubbont:hasResource ?resource ; 
               ubbont:sequenceNr ?seq . 
             ?resource ubbont:hasMDView ?image . 
+    		?resource ubbont:hasSMView ?canvasThumb . 
             BIND (iri(?image) as ?imgUrl ) 
             BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest")) AS ?manifestURL) 
             BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest/range/1")) AS ?rangeURL) 
