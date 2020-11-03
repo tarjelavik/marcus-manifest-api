@@ -116,7 +116,7 @@ async function constructManifest(data) {
                 "service": {
                   "id": canvas.body,
                   "type": "ImageService2",
-                  "profile": "level2"
+                  "profile": "level0"
                 }
               }
             }
@@ -128,7 +128,7 @@ async function constructManifest(data) {
       {
         id: data.structures.id,
         type: data.structures.type,
-        /* label: data.structures.label, */
+        label: "Default",
         items: [
           data.structures.items.map(item => {
             return {
