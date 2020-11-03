@@ -53,7 +53,6 @@ const frame = {
 }
 
 async function constructManifest(data) {
-  console.log(data.items[0])
   let manifest = {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     id: data.id,
@@ -99,7 +98,7 @@ async function constructManifest(data) {
       }
     },
     items: [
-      data.items.map(canvas => {
+      ...data.items.map(canvas => {
         return {
           id: canvas.id,
           type: canvas.type,
@@ -137,7 +136,7 @@ async function constructManifest(data) {
         type: data.structures.type,
         label: "Default",
         items: [
-          data.structures.items.map(item => {
+          ...data.structures.items.map(item => {
             return {
               id: item,
               type: "Canvas",
