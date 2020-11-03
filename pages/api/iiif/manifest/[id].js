@@ -217,7 +217,7 @@ export default async function handler(req, res) {
             ?part ubbont:hasResource ?resource ; 
               ubbont:sequenceNr ?seq . 
             ?resource ubbont:hasMDView ?image . 
-    		?resource ubbont:hasSMView ?canvasThumb . 
+    		?resource ubbont:hasXSView ?canvasThumb . 
             BIND (iri(?image) as ?imgUrl ) 
             BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest")) AS ?manifestURL) 
             BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest/range/1")) AS ?rangeURL) 
