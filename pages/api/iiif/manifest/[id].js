@@ -7,7 +7,6 @@ const frame = {
     "type": "@type",
     "body" : {
       "@id" : "http://www.w3.org/ns/oa#body",
-      "@type" : "@id"
     },
     "Annotation" : {
       "@id" : "http://www.w3.org/ns/oa#Annotation",
@@ -54,6 +53,7 @@ const frame = {
 }
 
 async function constructManifest(data) {
+  console.log(data.items[0])
   let manifest = {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     id: data.id,
@@ -102,19 +102,30 @@ async function constructManifest(data) {
       data.items.map(canvas => {
         return {
           id: canvas.id,
-          "type": "AnnotationPage",
+          type: canvas.type,
+          label: canvas.label,
+          width: 3000,
+          height: 5000,
           items: [
             {
-              "type": "Annotation",
-              "motivation": "painting",
-              "target": canvas.id,
-              body: {
-                "id": canvas.body,
-                "type": "Image",
-                "format": "image/jpeg",
-                "width": 3000,
-                "height": 5000
-              }
+              id: canvas.items.id,
+              type: "AnnotationPage",
+              label: canvas.label,
+              items: [
+                {
+                  type: "Annotation",
+                  motivation: "painting",
+                  label: canvas.label,
+                  target: canvas.id,
+                  body: {
+                    "id": canvas.items.body.id,
+                    "type": "Image",
+                    "format": "image/jpeg",
+                    "width": 3000,
+                    "height": 5000
+                  }
+                }
+              ]
             }
           ]
         }
@@ -158,6 +169,7 @@ export default async function handler(req, res) {
 
     const results = fetch(`http://sparql.ub.uib.no/sparql/query?query=${encodeURIComponent(query)}&output=json`)
       .then(response => response.json())
+      .catch(err => (console.log(err)))
 
     return results
   }
