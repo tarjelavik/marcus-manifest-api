@@ -113,9 +113,9 @@ async function constructManifest(data) {
         ],
         "logo": [
           {
-            "id": "http://marcus.uib.no/img/UiBmerke_grayscale.svg",
+            "id": "https://marcus-manifest-api.vercel.app/uib-logo.png",
             "type": "Image",
-            "format": "image/svg+xml"
+            "format": "image/png"
           }
         ]
       }
