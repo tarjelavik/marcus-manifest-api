@@ -1,10 +1,11 @@
 import * as jsonld from 'jsonld'
-import {omit, sortBy} from 'lodash'
+import { omit, sortBy } from 'lodash'
 
 const frame = {
   "@context" : {
     "id": "@id",
     "type": "@type",
+    "value": "@value",
     "body" : {
       "@id" : "http://www.w3.org/ns/oa#body",
     },
@@ -16,8 +17,16 @@ const frame = {
       "@id" : "http://iiif.io/api/presentation/3#items",
       "@type" : "@id"
     },
+    "homepage" : {
+      "@id" : "http://iiif.io/api/presentation/3#homepage",
+      "@type" : "@id"
+    },
     "label" : {
       "@id" : "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "seeAlso" : {
+      "@id": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "@type" : "@id"
     },
     "Manifest" : {
       "@id" : "http://iiif.io/api/presentation/3#Manifest",
@@ -63,9 +72,24 @@ async function constructManifest(data) {
     label: data.label,
     thumbnail: [
       {
-        id: data.thumbnail["@value"],
+        id: data.thumbnail.value,
         type: "Image",
         format: "image/jpeg"
+      }
+    ],
+    homepage: [
+      {
+        id: data.homepage,
+        type: "Text",
+        label: { "en": [ `Home page for ${data.label}` ] },
+        format: "text/html"
+      }
+    ],
+    seeAlso: [
+      {
+        id: data.seeAlso,
+        type: "Dataset",
+        format: "application/rdf+xml"
       }
     ],
     provider: [
@@ -114,11 +138,13 @@ async function constructManifest(data) {
           type: canvas.type,
           label: canvas.label,
           width: 1000,
-          height: 2000,
+          height: 1600,
           thumbnail: [
             {
-            id: canvas.thumbnail,
-            type: "Image"
+              id: canvas.thumbnail,
+              type: "Image",
+              width: 200,
+              height: 200,
             }
           ],
           items: [
@@ -137,7 +163,7 @@ async function constructManifest(data) {
                     "type": "Image",
                     "format": "image/jpeg",
                     "width": 1000,
-                    "height": 2000
+                    "height": 1600
                   }
                 }
               ]
@@ -179,52 +205,79 @@ export default async function handler(req, res) {
       return error
     }
 
-    let query = `
-    PREFIX dct: <http://purl.org/dc/terms/>
-      PREFIX ubbont: <http://data.ub.uib.no/ontology/>
-      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX sc: <http://iiif.io/api/presentation/3#>
-      PREFIX dc: <http://purl.org/dc/elements/1.1/>
-      PREFIX oa: <http://www.w3.org/ns/oa#>
-      CONSTRUCT {
-        ?s a sc:Manifest ;
-          dct:identifier ?id ;
-          rdfs:label ?title ;
-          dc:description ?desc ;
-          sc:thumbnail ?thumb ;
-          sc:items ?part ;
-          sc:structures ?rangeURL .
-        ?rangeURL a sc:Range ;
-          sc:items ?part .
-        ?part a sc:Canvas ;
-          rdfs:label ?seq ;
-          sc:thumbnail ?canvasThumb ;
-          sc:items ?resource .
-        ?resource a oa:Annotation ;
-          oa:body ?imgUrl .
-      } WHERE {
-        GRAPH
-          ?g {
-            VALUES ?id {"${id}"} 
-            ?s ubbont:hasRepresentation ?repr ; 
-              dct:title ?title ; 
-              dct:description ?desc ; 
-              dct:identifier ?id ;
-              ubbont:hasThumbnail ?thumb . 
-            ?repr dct:hasPart ?part ; 
-              rdfs:label ?partLabel . 
-            ?part ubbont:hasResource ?resource ; 
-              ubbont:sequenceNr ?seq . 
-            ?resource ubbont:hasMDView ?image . 
-    		?resource ubbont:hasXSView ?canvasThumb . 
-            BIND (iri(?image) as ?imgUrl ) 
-            BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest")) AS ?manifestURL) 
-            BIND (iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest/range/1")) AS ?rangeURL) 
-          } 
-        } 
-        ORDER BY ?s ?repr ?part ?resource ?image  
-    `
+    const query = `
+    PREFIX  sc:   <http://iiif.io/api/presentation/3#>
+    PREFIX  oa:   <http://www.w3.org/ns/oa#>
+    PREFIX  dct:  <http://purl.org/dc/terms/>
+    PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX  ubbont: <http://data.ub.uib.no/ontology/>
+    PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX  dc:   <http://purl.org/dc/elements/1.1/>
+  
+    CONSTRUCT 
+      { 
+        ?manifestURL rdf:type sc:Manifest .
+        ?manifestURL dct:identifier ?id .
+        ?manifestURL rdfs:label ?title .
+        ?manifestURL rdfs:seeAlso ?s .
+        ?manifestURL sc:homepage ?homepage .
+        ?manifestURL dc:description ?desc .
+        ?manifestURL sc:thumbnail ?thumb .
+        ?manifestURL sc:items ?part .
+        ?manifestURL sc:items ?singleCanvas .
+        ?manifestURL sc:structures ?rangeURL .
+        ?rangeURL rdf:type sc:Range .
+        ?rangeURL sc:items ?part .
+        ?rangeURL sc:items ?singleCanvas .
+        ?part rdf:type sc:Canvas .
+        ?part rdfs:label ?seq .
+        ?part sc:thumbnail ?canvasThumb .
+        ?part sc:items ?resource .
+        ?resource rdf:type oa:Annotation .
+        ?resource oa:body ?imgUrl .
+        ?singleCanvas rdf:type sc:Canvas .
+        ?singleCanvas rdfs:label 1 .
+        ?singleCanvas sc:thumbnail ?singleCanvasThumb .
+        ?singleCanvas sc:items ?singlePart .
+        ?singlePart rdf:type oa:Annotation .
+        ?singlePart oa:body ?singleImage .
+      }
+    WHERE
+      { GRAPH ?g
+          { VALUES ?id { "${id}" }
+            ?s  ubbont:hasRepresentation  ?repr ;
+                dct:title             ?title ;
+                dct:identifier        ?id ;
+                ubbont:hasThumbnail   ?thumb
+            OPTIONAL
+              { ?s  dct:description  ?desc }
+            OPTIONAL
+              { ?repr     dct:hasPart       ?singlePart ;
+                          rdfs:label        ?partLabel .
+                ?singlePart  ubbont:hasXSView  ?singleCanvasThumb
+                OPTIONAL
+                  { ?singlePart  ubbont:hasMDView  ?singleMD }
+                OPTIONAL
+                  { ?singlePart  ubbont:hasSMView  ?singleSM }
+              }
+            BIND(coalesce(?singleMD, ?singleSM) AS ?singleImage)
+            OPTIONAL
+              { ?repr     dct:hasPart         ?part ;
+                          rdfs:label          ?partLabel .
+                ?part     ubbont:hasResource  ?resource ;
+                          ubbont:sequenceNr   ?seq .
+                ?resource  ubbont:hasMDView   ?image ;
+                          ubbont:hasXSView    ?canvasThumb
+              }
+            BIND(iri(?image) AS ?imgUrl)
+            BIND(iri(concat("https://marcus-manifest-api.vercel.app/api/iiif/manifest/", ?partLabel)) AS ?manifestURL)
+            BIND(iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest/range/1")) AS ?rangeURL)
+            BIND(iri(concat("http://data.ub.uib.no/instance/page/", ?id, "_p1")) AS ?singleCanvas)
+            BIND(iri(replace(str(?s), "data.ub.uib.no", "marcus.uib.no", "i")) AS ?homepage)
+          }
+      }
+    ORDER BY ?s ?repr ?part ?resource ?image
+  `
 
     const results = fetch(`http://sparql.ub.uib.no/sparql/query?query=${encodeURIComponent(query)}&output=json`)
       .then(response => response.json())
@@ -240,7 +293,9 @@ export default async function handler(req, res) {
       const framed = jsonld.frame(toFrame, frame);
       const object = await framed
       
-      let x = omit(object,["@context"])
+      let x = omit(object, ["@context"])
+      x.items = [x.items]
+      x.structures.items = [x.structures.items]
       const constructedManifest = await constructManifest(x)
       const manifest = await constructedManifest
 
