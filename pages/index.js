@@ -24,8 +24,13 @@ export default function Home() {
           <br />
           <Link href="/api/iiif/manifest/ubb-wil-f-208"><a>api/iiif/manifest/ubb-wil-f-208</a></Link>
         </p>
+        
         <p className={styles.description}>
           Add a manifest to <Link href="https://mirador-dev.netlify.app/">Mirador 3</Link>
+        </p>
+
+        <p className={styles.description}>
+          <Link href="https://github.com/tarjelavik/marcus-manifest-api">Github</Link>
         </p>
       </main>
     </div>
