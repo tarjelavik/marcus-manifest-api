@@ -16,13 +16,17 @@ export default function Home() {
         </h1>
 
         <p className={styles.description}>
-          Test it out here!
+          IIIF Presentation API v3 compliant. Test it out here!
           <br />
           <Link href="/api/iiif/manifest/ubb-ms-0003"><a>api/iiif/manifest/ubb-ms-0003</a></Link>
           <br />
           <Link href="/api/iiif/manifest/ubb-ms-0185-j-a-007"><a>api/iiif/manifest/ubb-ms-0185-j-a-007</a></Link>
+          <br />
+          <Link href="/api/iiif/manifest/ubb-wil-f-208"><a>api/iiif/manifest/ubb-wil-f-208</a></Link>
         </p>
-        <p>Not working for single page objects.</p>
+        <p className={styles.description}>
+          Add a manifest to <Link href="https://mirador-dev.netlify.app/">Mirador 3</Link>
+        </p>
       </main>
     </div>
   )

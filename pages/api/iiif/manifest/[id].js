@@ -94,28 +94,30 @@ async function constructManifest(data) {
     ],
     provider: [
       {
-        "id": "https://www.uib.no/ub",
-        "type": "Agent",
-        "label": { 
-          "no": [ "Universitetsbiblioteket i Bergen" ],
-          "en": [ "University of Bergen Library" ] 
+        id: "https://www.uib.no/ub",
+        type: "Agent",
+        label: { 
+          no: [ "Universitetsbiblioteket i Bergen" ],
+          en: [ "University of Bergen Library" ] 
         },
-        "homepage": [
+        homepage: [
           {
-            "id": "https://www.uib.no/ub",
-            "type": "Text",
-            "label": { 
-              "no": [ "Universitetsbiblioteket i Bergen hjemmeside" ],
-              "en": [ "University of Bergen Library Homepage" ] 
+            id: "https://www.uib.no/ub",
+            type: "Text",
+            label: { 
+              no: [ "Universitetsbiblioteket i Bergen hjemmeside" ],
+              en: [ "University of Bergen Library Homepage" ] 
             },
-            "format": "text/html"
+            format: "text/html"
           }
         ],
-        "logo": [
+        logo: [
           {
-            "id": "https://marcus-manifest-api.vercel.app/uib-logo.png",
-            "type": "Image",
-            "format": "image/png"
+            id: "https://marcus-manifest-api.vercel.app/uib-logo.png",
+            type: "Image",
+            format: "image/png",
+            width: 200,
+            height: 200,
           }
         ]
       }
