@@ -240,7 +240,7 @@ export default async function handler(req, res) {
         ?singleCanvas sc:thumbnail ?singleCanvasThumb .
         ?singleCanvas sc:items ?singlePart .
         ?singlePart rdf:type oa:Annotation .
-        ?singlePart oa:body ?singleImage .
+        ?singlePart oa:body ?singleImageUrl .
       }
     WHERE
       { GRAPH ?g
@@ -270,6 +270,7 @@ export default async function handler(req, res) {
                           ubbont:hasXSView    ?canvasThumb
               }
             BIND(iri(?image) AS ?imgUrl)
+            BIND(iri(?singleImage) AS ?singleImageUrl)
             BIND(iri(concat("https://marcus-manifest-api.vercel.app/api/iiif/manifest/", ?partLabel)) AS ?manifestURL)
             BIND(iri(concat("http://data.ub.uib.no/instance/manuscript/", ?id, "/manifest/range/1")) AS ?rangeURL)
             BIND(iri(concat("http://data.ub.uib.no/instance/page/", ?id, "_p1")) AS ?singleCanvas)
