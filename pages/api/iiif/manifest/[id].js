@@ -70,6 +70,11 @@ async function constructManifest(data) {
     id: data.id,
     type: data.type,
     label: data.label,
+    ...(data.description && {
+      summary: {
+        en: [data.description]
+      }
+    }),
     thumbnail: [
       {
         id: data.thumbnail.value,
@@ -156,16 +161,17 @@ async function constructManifest(data) {
               label: canvas.label,
               items: [
                 {
+                  id: `${canvas.id}/annotation/1`,
                   type: "Annotation",
                   motivation: "painting",
                   label: canvas.label,
                   target: canvas.id,
                   body: {
-                    "id": canvas.items.body.id,
-                    "type": "Image",
-                    "format": "image/jpeg",
-                    "width": 1000,
-                    "height": 1600
+                    id: canvas.items.body.id,
+                    type: "Image",
+                    format: "image/jpeg",
+                    width: 1000,
+                    height: 1600
                   }
                 }
               ]
@@ -174,7 +180,7 @@ async function constructManifest(data) {
         }
       })
     ],
-    "structures": [
+    structures: [
       {
         id: data.structures.id,
         type: data.structures.type,
