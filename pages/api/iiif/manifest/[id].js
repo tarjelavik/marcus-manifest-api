@@ -294,8 +294,12 @@ export default async function handler(req, res) {
       const object = await framed
       
       let x = omit(object, ["@context"])
-      x.items = [x.items]
-      x.structures.items = [x.structures.items]
+      if (Array.isArray(x.items) == false) {
+        x.items = [x.items]
+      }
+      if (Array.isArray(x.structures.items) == false) {
+        x.structures.items = [x.structures.items]
+      }
       const constructedManifest = await constructManifest(x)
       const manifest = await constructedManifest
 
