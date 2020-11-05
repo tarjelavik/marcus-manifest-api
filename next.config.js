@@ -6,6 +6,7 @@ module.exports = {
         // mathching all API routes
         source: "/api/:path*",
         headers: [
+          { key: "Content-Type", value: "application/ld+json"},
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "*" },
           { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
