@@ -145,7 +145,7 @@ async function constructManifest(data) {
         return {
           id: canvas.id,
           type: canvas.type,
-          label: { en: [ canvas.label ] },
+          label: { en: [ `${canvas.label}` ] },
           width: 1000,
           height: 1600,
           thumbnail: [
@@ -160,13 +160,13 @@ async function constructManifest(data) {
             {
               id: canvas.items.id,
               type: "AnnotationPage",
-              label: { en: [ canvas.label ] },
+              label: { en: [ `${canvas.label}` ] },
               items: [
                 {
                   id: `${canvas.id}/annotation/1`,
                   type: "Annotation",
                   motivation: "painting",
-                  label: { en: [ canvas.label ] },
+                  label: { en: [ `${canvas.label}` ] },
                   target: canvas.id,
                   body: {
                     id: canvas.items.body.id,
