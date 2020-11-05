@@ -191,7 +191,6 @@ async function constructManifest(data) {
           ...data.structures.items.map(item => {
             return {
               id: item,
-              label: parseInt(item.split("_p")[1]),
               type: "Canvas",
             }
           })
@@ -315,13 +314,15 @@ export default async function handler(req, res) {
         if (Array.isArray(framed.structures.items) == false) {
           framed.structures.items = [framed.structures.items]
         }
+
+        // Sort nested arrays
+        framed.items = sortBy(framed.items, o => o.label)
+        framed.structures.items = sortBy(framed.structures.items, i => parseInt(i.split("_p")[1]))
+
         // Create the manifest
         const constructedManifest = await constructManifest(framed)
         const manifest = await constructedManifest
   
-        // Sort nested arrays
-        manifest.items = sortBy(manifest.items, o => o.label)
-        manifest.structures[0].items = sortBy(manifest.structures[0].items, i => i.label)
   
         res.status(200).json(manifest)
       } else {
