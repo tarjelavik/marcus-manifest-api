@@ -68,8 +68,8 @@ async function constructManifest(data) {
   let manifest = {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     id: data.id,
-    type: data.type,
-    label: data.label,
+    type: data.type, 
+    label: { no: [ data.label ] },
     ...(data.description && {
       summary: {
         en: [data.description]
@@ -82,11 +82,13 @@ async function constructManifest(data) {
         format: "image/jpeg"
       }
     ],
+    viewingDirection: "right-to-left",
+    behavior: [ "paged" ],
     homepage: [
       {
         id: data.homepage,
         type: "Text",
-        label: { "en": [ `Home page for ${data.label}` ] },
+        label: { en: [ `Home page for ${data.label}` ] },
         format: "text/html"
       }
     ],
@@ -143,7 +145,7 @@ async function constructManifest(data) {
         return {
           id: canvas.id,
           type: canvas.type,
-          label: canvas.label,
+          label: { en: [ canvas.label ] },
           width: 1000,
           height: 1600,
           thumbnail: [
@@ -158,13 +160,13 @@ async function constructManifest(data) {
             {
               id: canvas.items.id,
               type: "AnnotationPage",
-              label: canvas.label,
+              label: { en: [ canvas.label ] },
               items: [
                 {
                   id: `${canvas.id}/annotation/1`,
                   type: "Annotation",
                   motivation: "painting",
-                  label: canvas.label,
+                  label: { en: [ canvas.label ] },
                   target: canvas.id,
                   body: {
                     id: canvas.items.body.id,
@@ -184,7 +186,7 @@ async function constructManifest(data) {
       {
         id: data.structures.id,
         type: data.structures.type,
-        label: "Default",
+        label: { en: [ "Default" ] },
         items: [
           ...data.structures.items.map(item => {
             return {
