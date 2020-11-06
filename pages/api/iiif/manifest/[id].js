@@ -129,7 +129,7 @@ async function constructManifest(data) {
         ]
       }
     ],
-    rights: "https://creativecommons.org/licenses/by/4.0/",
+    rights: "http://creativecommons.org/licenses/by/4.0/",
     requiredStatement: {
       label: { 
         no: [ "Kreditering" ],
@@ -160,13 +160,11 @@ async function constructManifest(data) {
             {
               id: canvas.items.id,
               type: "AnnotationPage",
-              label: { en: [ `${canvas.label}` ] },
               items: [
                 {
                   id: `${canvas.id}/annotation/1`,
                   type: "Annotation",
                   motivation: "painting",
-                  label: { en: [ `${canvas.label}` ] },
                   target: canvas.id,
                   body: {
                     id: canvas.items.body.id,
