@@ -72,7 +72,7 @@ async function constructManifest(data) {
     label: { no: [ data.label ] },
     ...(data.description && {
       summary: {
-        en: [data.description]
+        none: [data.description]
       }
     }),
     thumbnail: [
@@ -88,14 +88,21 @@ async function constructManifest(data) {
       {
         id: data.homepage,
         type: "Text",
-        label: { en: [ `Home page for ${data.label}` ] },
+        label: {
+          en: [`Home page for ${data.label}`],
+          no: [`Nettside for ${data.label}`]
+        },
         format: "text/html"
       }
     ],
     seeAlso: [
       {
-        id: data.seeAlso,
+        id: `http://sparql.ub.uib.no/sparql/query?query=describe<${data.seeAlso}>`,
         type: "Dataset",
+        label: {
+          en: ["Object Description in RDF"],
+          en: ["Objekt beskrivelse i RDF"]
+        },
         format: "application/rdf+xml"
       }
     ],
@@ -145,7 +152,7 @@ async function constructManifest(data) {
         return {
           id: canvas.id,
           type: canvas.type,
-          label: { en: [ `${canvas.label}` ] },
+          label: { none: [ `${canvas.label}` ] },
           width: 1000,
           height: 1600,
           thumbnail: [
@@ -184,7 +191,10 @@ async function constructManifest(data) {
       {
         id: data.structures.id,
         type: data.structures.type,
-        label: { en: [ "Default" ] },
+        label: {
+          no: ["Standard innholdsfortegnelse"],
+          en: ["Default"]
+        },
         items: [
           ...data.structures.items.map(item => {
             return {
