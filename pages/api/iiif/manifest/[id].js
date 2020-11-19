@@ -82,7 +82,7 @@ async function constructManifest(data) {
         format: "image/jpeg"
       }
     ],
-    viewingDirection: "right-to-left",
+    viewingDirection: "left-to-right",
     behavior: [ "paged" ],
     homepage: [
       {
