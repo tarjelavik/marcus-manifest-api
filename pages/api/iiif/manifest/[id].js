@@ -2,64 +2,64 @@ import * as jsonld from 'jsonld'
 import { omit, sortBy } from 'lodash'
 
 const frame = {
-  "@context" : {
+  "@context": {
     "id": "@id",
     "type": "@type",
     "value": "@value",
-    "body" : {
-      "@id" : "http://www.w3.org/ns/oa#body",
+    "body": {
+      "@id": "http://www.w3.org/ns/oa#body",
     },
-    "Annotation" : {
-      "@id" : "http://www.w3.org/ns/oa#Annotation",
-      "@type" : "@id"
+    "Annotation": {
+      "@id": "http://www.w3.org/ns/oa#Annotation",
+      "@type": "@id"
     },
-    "items" : {
-      "@id" : "http://iiif.io/api/presentation/3#items",
-      "@type" : "@id"
+    "items": {
+      "@id": "http://iiif.io/api/presentation/3#items",
+      "@type": "@id"
     },
-    "homepage" : {
-      "@id" : "http://iiif.io/api/presentation/3#homepage",
-      "@type" : "@id"
+    "homepage": {
+      "@id": "http://iiif.io/api/presentation/3#homepage",
+      "@type": "@id"
     },
-    "label" : {
-      "@id" : "http://www.w3.org/2000/01/rdf-schema#label"
+    "label": {
+      "@id": "http://www.w3.org/2000/01/rdf-schema#label"
     },
-    "seeAlso" : {
+    "seeAlso": {
       "@id": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
-      "@type" : "@id"
+      "@type": "@id"
     },
-    "Manifest" : {
-      "@id" : "http://iiif.io/api/presentation/3#Manifest",
-      "@type" : "@id"
+    "Manifest": {
+      "@id": "http://iiif.io/api/presentation/3#Manifest",
+      "@type": "@id"
     },
-    "Range" : {
-      "@id" : "http://iiif.io/api/presentation/3#Range",
-      "@type" : "@id"
+    "Range": {
+      "@id": "http://iiif.io/api/presentation/3#Range",
+      "@type": "@id"
     },
-    "Canvas" : {
-      "@id" : "http://iiif.io/api/presentation/3#Canvas",
-      "@type" : "@id"
+    "Canvas": {
+      "@id": "http://iiif.io/api/presentation/3#Canvas",
+      "@type": "@id"
     },
-    "structures" : {
-      "@id" : "http://iiif.io/api/presentation/3#structures",
-      "@type" : "@id"
+    "structures": {
+      "@id": "http://iiif.io/api/presentation/3#structures",
+      "@type": "@id"
     },
-    "thumbnail" : {
-      "@id" : "http://iiif.io/api/presentation/3#thumbnail",
+    "thumbnail": {
+      "@id": "http://iiif.io/api/presentation/3#thumbnail",
     },
-    "description" : {
-      "@id" : "http://purl.org/dc/elements/1.1/description"
+    "description": {
+      "@id": "http://purl.org/dc/elements/1.1/description"
     },
-    "identifier" : {
-      "@id" : "http://purl.org/dc/terms/identifier"
+    "identifier": {
+      "@id": "http://purl.org/dc/terms/identifier"
     },
-    "sc" : "http://iiif.io/api/presentation/3#",
-    "oa" : "http://www.w3.org/ns/oa#",
-    "dct" : "http://purl.org/dc/terms/",
-    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-    "ubbont" : "http://data.ub.uib.no/ontology/",
-    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
-    "dc" : "http://purl.org/dc/elements/1.1/"
+    "sc": "http://iiif.io/api/presentation/3#",
+    "oa": "http://www.w3.org/ns/oa#",
+    "dct": "http://purl.org/dc/terms/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "ubbont": "http://data.ub.uib.no/ontology/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "dc": "http://purl.org/dc/elements/1.1/"
   },
   "@type": "Manifest",
 }
@@ -68,8 +68,8 @@ async function constructManifest(data) {
   let manifest = {
     "@context": "http://iiif.io/api/presentation/3/context.json",
     id: data.id,
-    type: data.type, 
-    label: { no: [ data.label ] },
+    type: data.type,
+    label: { no: [data.label] },
     ...(data.description && {
       summary: {
         none: [data.description]
@@ -83,7 +83,7 @@ async function constructManifest(data) {
       }
     ],
     viewingDirection: "left-to-right",
-    behavior: [ "paged" ],
+    behavior: ["paged"],
     homepage: [
       {
         id: data.homepage,
@@ -110,17 +110,17 @@ async function constructManifest(data) {
       {
         id: "https://www.uib.no/ub",
         type: "Agent",
-        label: { 
-          no: [ "Universitetsbiblioteket i Bergen" ],
-          en: [ "University of Bergen Library" ] 
+        label: {
+          no: ["Universitetsbiblioteket i Bergen"],
+          en: ["University of Bergen Library"]
         },
         homepage: [
           {
             id: "https://www.uib.no/ub",
             type: "Text",
-            label: { 
-              no: [ "Universitetsbiblioteket i Bergen hjemmeside" ],
-              en: [ "University of Bergen Library Homepage" ] 
+            label: {
+              no: ["Universitetsbiblioteket i Bergen hjemmeside"],
+              en: ["University of Bergen Library Homepage"]
             },
             format: "text/html"
           }
@@ -138,13 +138,13 @@ async function constructManifest(data) {
     ],
     rights: "http://creativecommons.org/licenses/by/4.0/",
     requiredStatement: {
-      label: { 
-        no: [ "Kreditering" ],
-        en: [ "Attribution" ] 
+      label: {
+        no: ["Kreditering"],
+        en: ["Attribution"]
       },
-      value: { 
-        no: [ "Tilgjengeliggjort av Universitetsbiblioteket i Bergen" ],
-        en: [ "Provided by University of Bergen Library" ] 
+      value: {
+        no: ["Tilgjengeliggjort av Universitetsbiblioteket i Bergen"],
+        en: ["Provided by University of Bergen Library"]
       }
     },
     items: [
@@ -152,7 +152,7 @@ async function constructManifest(data) {
         return {
           id: canvas.id,
           type: canvas.type,
-          label: { none: [ `${canvas.label}` ] },
+          label: { none: [`${canvas.label}`] },
           width: 1000,
           height: 1600,
           thumbnail: [
@@ -177,8 +177,8 @@ async function constructManifest(data) {
                     id: canvas.items.body.id,
                     type: "Image",
                     format: "image/jpeg",
-                    width: 1000,
-                    height: 1600
+                    width: 1024,
+                    height: 1024
                   }
                 }
               ]
@@ -218,7 +218,7 @@ export default async function handler(req, res) {
   } = req
 
   async function getObject(id) {
-    if(!id) {
+    if (!id) {
       return error
     }
 
@@ -311,10 +311,10 @@ export default async function handler(req, res) {
         // Frame the result for nested json
         const awaitFramed = jsonld.frame(results, frame);
         let framed = await awaitFramed
-  
+
         // Remove json-ld context 
         framed = omit(framed, ["@context"])
-  
+
         // When madeObject is a single page we convert to an array of one
         if (Array.isArray(framed.items) == false) {
           framed.items = [framed.items]
@@ -330,8 +330,8 @@ export default async function handler(req, res) {
         // Create the manifest
         const constructedManifest = await constructManifest(framed)
         const manifest = await constructedManifest
-  
-  
+
+
         res.status(200).json(manifest)
       } else {
         // Handle errors
