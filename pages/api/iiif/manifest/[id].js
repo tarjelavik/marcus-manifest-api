@@ -153,8 +153,8 @@ async function constructManifest(data) {
           id: canvas.id,
           type: canvas.type,
           label: { none: [`${canvas.label}`] },
-          width: 1000,
-          height: 1600,
+          width: 1024,
+          height: 1024,
           thumbnail: [
             {
               id: canvas.thumbnail,
